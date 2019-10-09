@@ -1,5 +1,6 @@
 package io.github.takusan23.mediaprojectionrecodesample
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -20,6 +21,10 @@ import java.lang.RuntimeException
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.media.AudioPlaybackCaptureConfiguration
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class MyService : Service() {
@@ -93,11 +98,9 @@ class MyService : Service() {
     }
 
 
+    @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.O)
     fun startREC() {
-
-        println(height)
-        println(width)
 
         projectionManager =
             getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -132,7 +135,23 @@ class MyService : Service() {
         )
 
         //開始
-        mMediaRecorder.start()
+       // mMediaRecorder.start()
+
+        //音声録音てすと
+        val samplingRate = 44100
+        val oneFrameDataCount = samplingRate / 10
+        val oneFrameSizeInByte = oneFrameDataCount * 2
+
+        //内部音声をとる
+        val audioPlaybackCaptureConfiguration = AudioPlaybackCaptureConfiguration.Builder(projection).build()
+
+        val recorder = AudioRecord.Builder()
+            .setAudioPlaybackCaptureConfig(audioPlaybackCaptureConfiguration)
+            .build()
+
+        recorder.startRecording()
+
+
 
 
 /*
